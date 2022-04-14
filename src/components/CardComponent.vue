@@ -1,30 +1,31 @@
 <template>
-  <div id="card" @mouseleave="toggleDescription" @mouseenter="toggleDescription">
+  <div :id="id" class="card" @mouseleave="toggleDescription" @mouseenter="toggleDescription">
     <div id="nft">
       <div id="img" @mouseleave="hoverImageOut" @mouseenter="hoverImage">
-        <img id="nft-img" :src="getSrc(image)" alt="NFT image">
-        <span id="icon-view">
-          <img src="../assets/images/icon-view.svg" alt="">
+        <img id="nft-img" :src="getSrc(nft.image)" alt="NFT image">
+        <span id="icon-view" @click="showImage(nft.image)">
+          <img src="@/assets/images/icon-view.svg" alt="">
         </span>
       </div>
-      <h3 class="text-hover-cyan">{{title}} {{id}}</h3>
+      <a :href="nft.url" target="_blank"><h3 class="text-hover-cyan" id="title">{{nft.title}} {{nft.id}}</h3></a>
       <div id="info">
-        <p id="description">{{description}}</p>
+        <p id="description">{{nft.description}}</p>
         <span>
           <span id="price">
-            <img src="../assets/images/icon-ethereum.svg"  alt="Icon of Ethereum"/>
-            <span>{{price}}</span>
+            <img src="@/assets/images/icon-ethereum.svg"  alt="Icon of Ethereum"/>
+            <span>{{nft.price}}</span>
           </span>
           <span>
-            <img src="../assets/images/icon-clock.svg"  alt=""/>
+            <img src="@/assets/images/icon-clock.svg"  alt=""/>
             <span>{{getDayLeft()}} days left</span>
           </span>
         </span>
       </div>
     </div>
     <div id="creator">
-      <img id="avatar" :src="getSrc(creator.avatar)" alt="Creator avatar">
-      Creation of<span class="text-hover-cyan">{{creator.name}}</span>
+      <img id="avatar" :src="getSrc(nft.creator.avatar)" alt="Creator avatar">
+      Creation of
+      <a class="text-hover-cyan" target="_blank" :href="nft.creator.url">{{nft.creator.name}}</a>
     </div>
   </div>
 </template>
@@ -34,50 +35,53 @@ import $ from 'jquery'
 
 export default {
   name: "CardComponent",
-  data() {
-    return {
-      id: "#3429",
-      title: "Equilibrium",
-      description: "Our Equilibrium collection promotes balance and calm",
-      image: "image-equilibrium.jpg",
-      price: "0.041 ETH",
-      expireDate: new Date(Date.now() + (1000 * 60 * 60 * 24 * 3)),
+  props: {
+    nft: {
+      id: String,
+      title: String,
+      description: String,
+      image: String,
+      price: String,
       creator: {
-        name: "Jules Wyvern",
-        avatar: "image-avatar.png"
-      }
-    }
+        name: String,
+        avatar: String
+      },
+      expireDate: Date
+    },
+    id: String,
+    showImage: Function
   },
   methods: {
     getDayLeft() {
-      return Math.round((this.expireDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      let date = new Date(this.nft.expireDate)
+      return Math.round((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     },
     getSrc(img) {
       if (img)
-        return require('../assets/images/' + img);
-      else return "";
+        return require('@/assets/images/' + img)
+      else return ""
     },
     toggleDescription() {
-      $('#info').animate({
+      $('#'+this.id + ' #info').animate({
         height: 'toggle'
       }, 300)
     },
     hoverImage() {
-      $("#icon-view").fadeIn()
+      $('#'+this.id + " #icon-view").fadeIn()
     },
     hoverImageOut() {
-      $("#icon-view").fadeOut()
+      $('#'+this.id + " #icon-view").fadeOut()
     }
   },
   mounted() {
-    $("#info").hide();
-    $("#icon-view").hide();
+    $('#'+this.id + " #info").hide()
+    $('#'+this.id + " #icon-view").hide()
   }
 }
 </script>
 
 <style scoped lang="scss">
-#card {
+.card {
   background-color: var(--dark-blue);
   color: var(--soft-blue);
   padding: 1rem;
@@ -89,15 +93,17 @@ export default {
 
   &:hover {
     transform: scale(1.05);
+    box-shadow: white 0 0 20px;
   }
 }
 
 #nft {
-  h3 {
+  #title {
     font-size: 1.5rem;
     color: var(--white);
     margin-bottom: 0;
     cursor: pointer;
+    width: max-content;
   }
   #description {
     margin-bottom: 0;
@@ -133,7 +139,7 @@ export default {
 
     #icon-view {
       position: absolute;
-      background-color: transparentize(hsl(178, 100%, 50%), 0.5);
+      background-color: transparentize(hsl(178, 100%, 50%), 0.7);
       width: 100%;
       height: 100%;
       top: 0;
@@ -163,7 +169,7 @@ export default {
     border: white solid 1px;
     border-radius: 100%;
   }
-  span {
+  a {
     color: var(--white);
     font-weight: bold;
     margin-left: -10px;
