@@ -28,10 +28,10 @@ export default {
 
 <style scoped>
 #root {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(60, 75, 103, 0.36);
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
 }
@@ -57,5 +57,13 @@ span {
 
 img {
   border-radius: 1rem;
+}
+
+#box, img {
+  max-width: 100%;
+  max-height: 100%;
+  height: max-content;
+  width: max-content;
+  box-sizing: border-box;
 }
 </style>

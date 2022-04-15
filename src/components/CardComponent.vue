@@ -1,13 +1,13 @@
 <template>
-  <div :id="id" class="card" @mouseleave="toggleDescription" @mouseenter="toggleDescription">
+  <div :id="id" class="card">
     <div id="nft">
-      <div id="img" @mouseleave="hoverImageOut" @mouseenter="hoverImage">
+      <div id="img">
         <img id="nft-img" :src="getSrc(nft.image)" alt="NFT image">
         <span id="icon-view" @click="showImage(nft.image)">
           <img src="@/assets/images/icon-view.svg" alt="">
         </span>
       </div>
-      <a :href="nft.url" target="_blank"><h3 class="text-hover-cyan" id="title">{{nft.title}} {{nft.id}}</h3></a>
+      <h3 id="title"><a :href="nft.url" target="_blank">{{nft.title}} {{nft.id}}</a></h3>
       <div id="info">
         <p id="description">{{nft.description}}</p>
         <span>
@@ -25,7 +25,7 @@
     <div id="creator">
       <img id="avatar" :src="getSrc(nft.creator.avatar)" alt="Creator avatar">
       Creation of
-      <a class="text-hover-cyan" target="_blank" :href="nft.creator.url">{{nft.creator.name}}</a>
+      <a target="_blank" :href="nft.creator.url">{{nft.creator.name}}</a>
     </div>
   </div>
 </template>
@@ -60,22 +60,23 @@ export default {
       if (img)
         return require('@/assets/images/' + img)
       else return ""
-    },
-    toggleDescription() {
-      $('#'+this.id + ' #info').animate({
-        height: 'toggle'
-      }, 300)
-    },
-    hoverImage() {
-      $('#'+this.id + " #icon-view").fadeIn()
-    },
-    hoverImageOut() {
-      $('#'+this.id + " #icon-view").fadeOut()
     }
   },
   mounted() {
     $('#'+this.id + " #info").hide()
     $('#'+this.id + " #icon-view").hide()
+
+    let info = $('#'+this.id + ' #info')
+    $("#"+this.id).hover(() => {
+      info.stop(true).animate({
+        height: 'toggle'
+      }, 300)
+    })
+
+    let icon = $('#'+this.id + ' #icon-view')
+    $("#"+this.id + " #img").hover(() => {
+      icon.stop(true).fadeToggle()
+    })
   }
 }
 </script>
@@ -100,10 +101,12 @@ export default {
 #nft {
   #title {
     font-size: 1.5rem;
-    color: var(--white);
     margin-bottom: 0;
     cursor: pointer;
     width: max-content;
+    a {
+      color: var(--white);
+    }
   }
   #description {
     margin-bottom: 0;
@@ -175,10 +178,6 @@ export default {
     margin-left: -10px;
     cursor: pointer;
   }
-}
-
-.text-hover-cyan:hover {
-  color: var(--cyan) !important;
 }
 
 </style>
